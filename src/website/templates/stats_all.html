@@ -1,0 +1,195 @@
+{% extends "page_base.html" %}
+
+{% block title %}All Raw Statistics{% endblock title %}
+
+{% block content %}
+{% for owner in owners %}
+<div class="row">
+    <div class="card-group w-100">
+        <div class="card">
+            <div class="card-header">{{ owner.owner.display_name }} - Batters</div>
+            <div class="card-body">
+                <table class="table table-hover table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>player</th>
+                            <th>H</th>
+                            <th>HR</th>
+                            <th>R</th>
+                            <th>RBI</th>
+                            <th>SB</th>
+                            <th>BB</th>
+                            <th>points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set row_count = namespace(value=1) %}
+                        {% for batter in owner.batters %}
+                            {% if row_count.value <= 10 %}
+                                {% set row_class = "table-success" %}
+                            {% else %}
+                                {% set row_class = "table-info" %}
+                            {% endif %}
+                            <tr class="{{ row_class }}">
+                                <td>{{ batter.player.player.last_name }}, {{ batter.player.player.first_name }}</td>
+                                <td>{{ batter.player.player.hits }}</td>
+                                <td>{{ batter.player.player.home_runs }}</td>
+                                <td>{{ batter.player.player.runs }}</td>
+                                <td>{{ batter.player.player.rbi }}</td>
+                                <td>{{ batter.player.player.stolen_bases }}</td>
+                                <td>{{ batter.player.player.walks }}</td>
+                                <td>{{ batter.player.player.points }}</td>
+                            </tr>
+                            {% set row_count.value = row_count.value + 1 %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">Totals Go Here</div>
+        </div>
+        <div class="card">
+            <div class="card-header">{{ owner.owner.display_name }} - Pitchers</div>
+            <div class="card-body">
+                <table class="table table-hover table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>player</th>
+                            <th>IP</th>
+                            <th>SV</th>
+                            <th>SO</th>
+                            <th>W</th>
+                            <th>points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set row_count = namespace(value=1) %}
+                        {% for pitcher in owner.pitchers %}
+                            {% if row_count.value <= 10 %}
+                                {% set row_class = "table-success" %}
+                            {% else %}
+                                {% set row_class = "table-info" %}
+                            {% endif %}
+                            <tr class="{{ row_class }}">
+                                <td>{{ pitcher.player.player.last_name }}, {{ pitcher.player.player.first_name }}</td>
+                                <td>{{ pitcher.player.player.innings_pitched }}</td>
+                                <td>{{ pitcher.player.player.saves }}</td>
+                                <td>{{ pitcher.player.player.strikeouts }}</td>
+                                <td>{{ pitcher.player.player.wins }}</td>
+                                <td>{{ pitcher.player.player.points }}</td>
+                            </tr>
+                            {% set row_count.value = row_count.value + 1 %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">Totals Go Here</div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+
+
+
+
+
+
+
+
+<!--
+<div class="row">
+    <div class="col">
+<table class="table table-sm table-striped">
+    <thead class="thead-dark">
+    <tr>
+        <th>owner</th>
+        <th>player</th>
+        <th>type</th>
+        <th>H</th>
+        <th>HR</th>
+        <th>R</th>
+        <th>RBI</th>
+        <th>SB</th>
+        <th>BB</th>
+        <th>points</th>
+    </tr>
+    </thead>
+    <tbody>
+{% set row_count = namespace(value=1) %}
+{% for roster in batters %}
+    {% if loop.changed(roster.owner.display_name) %}
+        {% set row_count.value = 1 %}
+        {% set row_msg = "The owner has changed" %}
+    {% else %}
+        {% set row_count.value = row_count.value + 1 %}
+        {% set row_msg = "The owner has not changed" %}
+    {% endif %}
+    {% if row_count.value <= 10 %}
+        {% set row_class = "table-success" %}
+    {% else %}
+        {% set row_class = "table-info" %}
+    {% endif %}
+<tr class="{{ row_class }}" row-count="{{ row_count.value }}" message="{{ row_msg }}">
+    <td>{{ roster.owner.display_name }}</td>
+    <td>{{ roster.player.player.last_name }}, {{ roster.player.player.first_name }}</td>
+    <td>{{ roster.player.player.player_type }}</td>
+    <td>{{ roster.player.player.hits }}</td>
+    <td>{{ roster.player.player.home_runs }}</td>
+    <td>{{ roster.player.player.runs }}</td>
+    <td>{{ roster.player.player.rbi }}</td>
+    <td>{{ roster.player.player.stolen_bases }}</td>
+    <td>{{ roster.player.player.walks }}</td>
+    <td>{{ roster.player.player.points }}</td>
+</tr>
+{% endfor %}
+    </tbody>
+</table>
+    </div>
+
+    <div class="col">
+<table class="table table-sm table-striped">
+    <thead class="thead-dark">
+    <tr>
+        <th>owner</th>
+        <th>player</th>
+        <th>type</th>
+        <th>IP</th>
+        <th>SV</th>
+        <th>SO</th>
+        <th>W</th>
+        <th>points</th>
+    </tr>
+    </thead>
+    <tbody>
+{% set row_count = namespace(value=1) %}
+{% for roster in pitchers %}
+    {% if loop.changed(roster.owner.display_name) %}
+        {% set row_count.value = 1 %}
+        {% set row_msg = "The owner has changed" %}
+    {% else %}
+        {% set row_count.value = row_count.value + 1 %}
+        {% set row_msg = "The owner has not changed" %}
+    {% endif %}
+    {% if row_count.value <= 10 %}
+        {% set row_class = "table-success" %}
+    {% else %}
+        {% set row_class = "table-info" %}
+    {% endif %}
+<tr class="{{ row_class }}" row-count="{{ row_count.value }}" message="{{ row_msg }}">
+    <td>{{ roster.owner.display_name }}</td>
+    <td>{{ roster.player.player.last_name }}, {{ roster.player.player.first_name }}</td>
+    <td>{{ roster.player.player.player_type }}</td>
+    <td>{{ roster.player.player.innings_pitched }}</td>
+    <td>{{ roster.player.player.saves }}</td>
+    <td>{{ roster.player.player.strikeouts }}</td>
+    <td>{{ roster.player.player.wins }}</td>
+    <td>{{ roster.player.player.points }}</td>
+</tr>
+{% endfor %}
+    </tbody>
+</table>
+        </div>
+</div>
+-->
+{% endblock content %}

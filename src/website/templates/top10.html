@@ -1,0 +1,73 @@
+{% extends "page_base.html" %}
+
+{% block title %}Top 10 Scorers{% endblock title %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+<table class="table table-sm table-striped">
+    <thead class="thead-dark">
+    <tr>
+        <th>owner</th>
+        <th>player</th>
+        <th>type</th>
+        <th>H</th>
+        <th>HR</th>
+        <th>R</th>
+        <th>RBI</th>
+        <th>SB</th>
+        <th>BB</th>
+        <th>points</th>
+    </tr>
+    </thead>
+    <tbody>
+{% for roster in batters %}
+<tr>
+    <td>{{ roster.owner.display_name }}</td>
+    <td>{{ roster.player.player.last_name }}, {{ roster.player.player.first_name }}</td>
+    <td>{{ roster.player.player.player_type }}</td>
+    <td>{{ roster.player.player.hits }}</td>
+    <td>{{ roster.player.player.home_runs }}</td>
+    <td>{{ roster.player.player.runs }}</td>
+    <td>{{ roster.player.player.rbi }}</td>
+    <td>{{ roster.player.player.stolen_bases }}</td>
+    <td>{{ roster.player.player.walks }}</td>
+    <td>{{ roster.player.player.points }}</td>
+</tr>
+{% endfor %}
+    </tbody>
+</table>
+    </div> <!-- end col -->
+
+    <div class="col">
+<table class="table table-sm table-striped">
+    <thead class="thead-dark">
+    <tr>
+        <th>owner</th>
+        <th>player</th>
+        <th>type</th>
+        <th>IP</th>
+        <th>SV</th>
+        <th>SO</th>
+        <th>W</th>
+        <th>points</th>
+    </tr>
+    </thead>
+    <tbody>
+{% for roster in pitchers %}
+<tr>
+    <td>{{ roster.owner.display_name }}</td>
+    <td>{{ roster.player.player.last_name }}, {{ roster.player.player.first_name }}</td>
+    <td>{{ roster.player.player.player_type }}</td>
+    <td>{{ roster.player.player.innings_pitched }}</td>
+    <td>{{ roster.player.player.saves }}</td>
+    <td>{{ roster.player.player.strikeouts }}</td>
+    <td>{{ roster.player.player.wins }}</td>
+    <td>{{ roster.player.player.points }}</td>
+</tr>
+{% endfor %}
+    </tbody>
+</table>
+        </div> <!-- end col -->
+</div> <!-- end row -->
+{% endblock content %}
