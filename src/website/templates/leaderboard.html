@@ -1,0 +1,28 @@
+{% extends "page_base.html" %}
+
+{% block title %}Owner Leaderboard{% endblock title %}
+
+{% block content %}
+<table class="table table-sm table-striped">
+    <thead class="thead-dark">
+    <tr>
+        <th>owner</th>
+        <th>bat pts</th>
+        <th>pit pts</th>
+        <th>tot pts</th>
+        <th>overall pts</th>
+    </tr>
+    </thead>
+    <tbody>
+{% for owner in owners %}
+<tr>
+    <td>{{ owner.owner_info.display_name }}</td>
+    <td>{{ owner.bat_points }}</td>
+    <td>{{ owner.pit_points }}</td>
+    <td>{{ owner.points }}</td>
+    <td>{{ owner.overall_points }}</td>
+</tr>
+{% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
