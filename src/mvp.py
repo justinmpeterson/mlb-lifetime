@@ -10,13 +10,13 @@ import os
 
 
 def create_draft_file(draft_season, pick_file, draft_file, player_file):
-    owner_count = 8
-    round_count = 40
-    snake_style_draft = True
+    owner_count = os.getenv('MSF_FANTASY_OWNERS')
+    round_count = os.getenv('MSF_FANTASY_DRAFT_ROUNDS')
+    snake_style_draft = True if os.getenv('MSF_FANTASY_DRAFT_SNAKE') == 'true' else False
     owner_file = 'data/team_owners.json'
     all_owners = []
     ordered_owners = []
-    draft_order_owner_ids = [8, 2, 7, 5, 1, 3, 4, 6]
+    draft_order_owner_ids = os.getenv('MSF_FANTASY_DRAFT_ORDER').split(',')
 
     with open(owner_file, 'r') as f1:
         owner_data = json.load(f1)
@@ -67,13 +67,18 @@ def update_provider_data():
     file_names = {}
     msf = MSFConnector(os.getenv('MSF_VERSION'), os.getenv('MSF_API_KEY'), os.getenv('MSF_PASSWORD'), call_file)
 
-    if args.season == 1776:
+    local_season = int(os.getenv('MSF_SEASON')) or 1776
+    local_season = args.season if args.season != 1776 else local_season
+    local_season_type = os.getenv('MSF_SEASON_TYPE') or 'regular'
+    local_season_type = args.season_type if args.season_type != 'none' else local_season_type
+
+    if local_season == 1776:
         current_season = msf.get_current_season(league, os.getenv('MSF_RESPONSE_FORMAT'))
         season = current_season[0]
         season_type = current_season[1]
     else:
-        season = args.season
-        season_type = args.season_type
+        season = local_season
+        season_type = local_season_type
 
     file_names['pick_data'] = f'data/drafts/{season}-{season_type}-picks.txt'
     file_names['draft_data'] = f'data/drafts/{season}-{season_type}.json'
@@ -113,7 +118,7 @@ if __name__ == '__main__':
     parser.add_argument('--run-type', '-r', help='What type of run to do', choices=['draft', 'season', 'update'])
     parser.add_argument('--season', '-s', type=int, default=1776, help='MLB season as 4-digit year')
     parser.add_argument('--season-type', '-t', help='MLB season type', choices=['pre', 'regular', 'post'],
-                        default='regular')
+                        default='none')
     args = parser.parse_args()
 
     main()
