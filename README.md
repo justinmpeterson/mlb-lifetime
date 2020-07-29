@@ -22,3 +22,4 @@
 - [ ] Add **Last Date Played** to the Stats page, or **On IL**, or something that makes sense
 - [ ] Add **Next Probable Start** to the Stats page
 - [ ] Enable `?person=John` in the query string so that John's players appear first
+- [ ] Update `export_html.py` to use environment variables for season and season type, like `mvp.py` does

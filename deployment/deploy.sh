@@ -16,9 +16,11 @@ rm -rf src/website/__pycache__/
 #echo "${GITHUB_PACKAGE_TOKEN}" | docker login ${PKG_DOMAIN} -u ${GITHUB_USERNAME} --password-stdin
 
 docker build --no-cache -f Dockerfile -t ${PROJECT_IMG_NAME}:${PROJECT_TAG} \
-  --build-arg MSF_API_KEY="${MSF_API_KEY}" \
+  --build-arg MSF_FANTASY_DRAFT_ORDER="${MSF_FANTASY_DRAFT_ORDER}" \
+  --build-arg MSF_FANTASY_DRAFT_ROUNDS="${MSF_FANTASY_DRAFT_ROUNDS}" \
+  --build-arg MSF_FANTASY_DRAFT_SNAKE="${MSF_FANTASY_DRAFT_SNAKE}" \
   --build-arg MSF_FANTASY_LEAGUE="${MSF_FANTASY_LEAGUE}" \
-  --build-arg MSF_PASSWORD="${MSF_PASSWORD}" \
+  --build-arg MSF_FANTASY_OWNERS="${MSF_FANTASY_OWNERS}" \
   --build-arg MSF_RESPONSE_FORMAT="${MSF_RESPONSE_FORMAT}" \
   --build-arg MSF_SEASON="${MSF_SEASON}" \
   --build-arg MSF_SEASON_TYPE="${MSF_SEASON_TYPE}" \
