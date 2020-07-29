@@ -12,7 +12,9 @@
 
 1. Run `scripts/grab_html_output.sh` in the Docker image you created in the previous section. Something like this:
 
-    $ docker run -it --rm -e MSF_API_KEY -e MSF_PASSWORD fantasy-lifetime-mlb:2020-regular scripts/grab_html_output.sh
+```shell
+$ docker run -it --rm -e MSF_API_KEY -e MSF_PASSWORD fantasy-lifetime-mlb:2020-regular scripts/grab_html_output.sh
+```
 
 # TODO
 
