@@ -10,8 +10,8 @@ import os
 
 
 def create_draft_file(draft_season, pick_file, draft_file, player_file):
-    owner_count = os.getenv('MSF_FANTASY_OWNERS')
-    round_count = os.getenv('MSF_FANTASY_DRAFT_ROUNDS')
+    owner_count = int(os.getenv('MSF_FANTASY_OWNERS'))
+    round_count = int(os.getenv('MSF_FANTASY_DRAFT_ROUNDS'))
     snake_style_draft = True if os.getenv('MSF_FANTASY_DRAFT_SNAKE') == 'true' else False
     owner_file = 'data/team_owners.json'
     all_owners = []
@@ -23,7 +23,7 @@ def create_draft_file(draft_season, pick_file, draft_file, player_file):
     for owner in owner_data:
         all_owners.append(TeamOwner(**owner))
     for pick_owner in draft_order_owner_ids:
-        ordered_owners.append([x for x in all_owners if x.owner_id == pick_owner][0])
+        ordered_owners.append([x for x in all_owners if x.owner_id == int(pick_owner)][0])
 
     with open(player_file, 'r') as f2:
         active_players = json.load(f2)['activeplayers']['playerentry']
