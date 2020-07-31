@@ -8,6 +8,7 @@ results/
 src/**/__pycache__/
 venv/
 
+!data/potential_api_calls.json
 !data/team_owners.json.sample
 !data/drafts/sample-picks-file.txt
 
