@@ -56,7 +56,7 @@ def update_season_data(season_file, stat_file_name):
 
 
 def update_provider_data():
-    call_file = 'lib/potential_api_calls.json'
+    call_file = 'data/potential_api_calls.json'
     data_source = DataSources.API
     league = os.getenv('MSF_FANTASY_LEAGUE')
     file_names = {}
@@ -102,13 +102,18 @@ def main():
         start_season_from_draft_data(file_names['draft_data'], file_names['season_data'])
     elif args.run_type == 'update':
         update_season_data(file_names['season_data'], file_names['cumulative_player_stats'])
+    elif args.run_type == 'all':
+        create_draft_file(current_season, file_names['pick_data'], file_names['draft_data'],
+                          file_names['active_players'])
+        start_season_from_draft_data(file_names['draft_data'], file_names['season_data'])
+        update_season_data(file_names['season_data'], file_names['cumulative_player_stats'])
 
 
 if __name__ == '__main__':
     load_dotenv()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--run-type', '-r', help='What type of run to do', choices=['draft', 'season', 'update'])
+    parser.add_argument('--run-type', '-r', help='What type of run to do', choices=['all', 'draft', 'season', 'update'])
     parser.add_argument('--season', '-s', type=int, default=1776, help='MLB season as 4-digit year')
     parser.add_argument('--season-type', '-t', help='MLB season type', choices=['pre', 'regular', 'post'],
                         default='none')

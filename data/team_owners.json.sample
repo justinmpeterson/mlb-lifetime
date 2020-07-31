@@ -1,0 +1,23 @@
+[
+  {
+    "owner_id": 1,
+    "first_name": "Luke",
+    "last_name": "Skywalker",
+    "display_name": "Luke",
+    "active": true
+  },
+  {
+    "owner_id": 2,
+    "first_name": "Obi-Wan",
+    "last_name": "Kenobi",
+    "display_name": "OB-1",
+    "active": true
+  },
+  {
+    "owner_id": 3,
+    "first_name": "Qui-Gon",
+    "last_name": "Jinn",
+    "display_name": "Qui-Gon",
+    "active": false
+  }
+]
