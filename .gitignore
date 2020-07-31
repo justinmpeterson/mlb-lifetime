@@ -1,9 +1,14 @@
 .idea/
 __pycache__/
-data/
+data/*.*
+data/drafts/*.*
+data/seasons/*.*
 output/
 results/
 src/**/__pycache__/
 venv/
+
+!data/team_owners.json.sample
+!data/drafts/sample-picks-file.txt
 
 .env
