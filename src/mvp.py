@@ -56,7 +56,7 @@ def update_season_data(season_file, stat_file_name):
 
 
 def update_provider_data():
-    call_file = 'lib/potential_api_calls.json'
+    call_file = 'data/potential_api_calls.json'
     data_source = DataSources.API
     league = os.getenv('MSF_FANTASY_LEAGUE')
     file_names = {}

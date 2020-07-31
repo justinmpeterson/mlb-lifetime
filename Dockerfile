@@ -27,15 +27,15 @@ RUN apk add --update --no-cache openssh-client
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-RUN mkdir data lib output results scripts src
+RUN mkdir data output results scripts src
 RUN mkdir data/drafts data/seasons
 RUN mkdir output/wwwhtml
 
 COPY ./data/drafts/*.txt ./data/drafts/
+COPY ./data/potential_api_calls.json ./data/
 COPY ./data/team_owners.json ./data/
 COPY ./scripts/grab_html_output.sh ./scripts/
 COPY ./src/ ./src/
-COPY ./lib/ ./lib/
 COPY ./__init__.py .
 COPY ./requirements.txt .
 

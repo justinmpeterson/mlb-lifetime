@@ -6,7 +6,7 @@
 1. Put your picks in the order in which they occurred in a file named like `data/drafts/(season)-(season_type)-picks.txt`.
 1. Update your `.env` file to change whatever needs to change: league, response format, season, season type, draft rounds, etc.
 1. Update `data/team_owners.json` to add, activate, or deactivate people as necessary.
-1. Run `deployment/deploy.sh` to build this season's Docker image.
+1. Run `scripts/deploy.sh` to build this season's Docker image.
     * Pass a `--github` flag to upload the image to GitHub Packages.
 
 ## Periodic Stat Updates
