@@ -1,0 +1,31 @@
+{% extends "page_base.html" %}
+
+{% block title %}All Raw Statistics{% endblock title %}
+
+{% block content %}
+<h2>Overview</h2>
+
+<p>The following players were drafted but the system has been unable to map them to an identity in our data provider's
+data set. This could be because the player hasn't played major league baseball yet, or it could be because of a typo
+(yes, missing accent marks count as typos).</p>
+
+<p>If you want to get your players reconciled, please reach out to Justin Peterson over Slack and give him the correct
+spelling for your unreconciled player.</p>
+
+<h2>Unreconciled Players</h2>
+
+{% for owner in owners %}
+<div class="row">
+    <div class="card-group mb-3 w-50">
+        <div class="card">
+            <div class="card-header">{{ owner.owner.display_name }}</div>
+            <ul class="list-group list-group-flush">
+                {% for player in owner.unreconciled_players %}
+                    <li class="list-group-item">{{ player.player }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock content %}

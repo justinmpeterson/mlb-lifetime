@@ -49,3 +49,10 @@ def top_10():
     p.sort(key=lambda x: (x.owner.display_name, -x.player.player.points))
 
     return render_template('not_implemented.html')
+
+
+@app.route('/unreconciled')
+def unreconciled_players():
+    season_obj = get_season_object(request)
+
+    return render_template('unreconciled_players.html', owners=season_obj.unreconciled_players_by_owner)

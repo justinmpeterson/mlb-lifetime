@@ -7,13 +7,24 @@ PROJECT_IMG_NAME=fantasy-lifetime-mlb
 PROJECT_TAG="${MSF_SEASON}-${MSF_SEASON_TYPE}"
 PKG_DOMAIN="docker.pkg.github.com"
 PKG_URL="${PKG_DOMAIN}/${GITHUB_USERNAME}/${GITHUB_REPO}"
-SSH_PRIVATE_KEY=$(cat ~/.ssh/tilde.team)
+UPLOAD_TO_GITHUB=0
+
+for arg in "$@"
+do
+  case $arg in
+    --github)
+      UPLOAD_TO_GITHUB=1
+      shift
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
 
 rm -rf src/__pycache__/
 rm -rf src/classes/__pycache__/
 rm -rf src/website/__pycache__/
-
-#echo "${GITHUB_PACKAGE_TOKEN}" | docker login ${PKG_DOMAIN} -u ${GITHUB_USERNAME} --password-stdin
 
 docker build --no-cache -f Dockerfile -t ${PROJECT_IMG_NAME}:${PROJECT_TAG} \
   --build-arg MSF_FANTASY_DRAFT_ORDER="${MSF_FANTASY_DRAFT_ORDER}" \
@@ -25,7 +36,11 @@ docker build --no-cache -f Dockerfile -t ${PROJECT_IMG_NAME}:${PROJECT_TAG} \
   --build-arg MSF_SEASON="${MSF_SEASON}" \
   --build-arg MSF_SEASON_TYPE="${MSF_SEASON_TYPE}" \
   --build-arg MSF_VERSION="${MSF_VERSION}" \
-  --build-arg SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}" \
   .
-#docker tag mlb-fantasy-lifetime:2020-regular ${PKG_URL}/${PROJECT_IMG_NAME}:${PROJECT_TAG}
-#docker push ${PKG_URL}/${PROJECT_IMG_NAME}:${PROJECT_TAG}
+
+if [ UPLOAD_TO_GITHUB -eq 1 ]
+then
+	echo "${GITHUB_PACKAGE_TOKEN}" | docker login ${PKG_DOMAIN} -u ${GITHUB_USERNAME} --password-stdin
+	docker tag ${PROJECT_IMG_NAME}:${PROJECT_TAG} ${PKG_URL}/${PROJECT_IMG_NAME}:${PROJECT_TAG}
+	docker push ${PKG_URL}/${PROJECT_IMG_NAME}:${PROJECT_TAG}
+fi

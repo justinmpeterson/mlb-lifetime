@@ -99,6 +99,17 @@ class Season:
     def unreconciled_players(self):
         return self.__unreconciled_players
 
+    @property
+    def unreconciled_players_by_owner(self):
+        owners = []
+
+        for owner in self.__team_owners:
+            unreconciled = [x for x in self.__unreconciled_players if x.owner.owner_id == owner.owner_id]
+            unreconciled.sort(key=lambda x: x.player)
+            owners.append(dict(owner=owner, unreconciled_players=unreconciled))
+
+        return owners
+
     @classmethod
     def from_draft_file(cls, draft_file):
         draft_data = Draft().from_json_file(draft_file)
