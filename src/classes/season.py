@@ -31,7 +31,6 @@ class Season:
     @property
     def batters(self):
         return [x for x in self.__team_rosters if x.player.player.player_type == 'B']
-
     
     @property
     def top_x_batters(self):
@@ -99,6 +98,17 @@ class Season:
     def unreconciled_players(self):
         return self.__unreconciled_players
 
+    @property
+    def unreconciled_players_by_owner(self):
+        owners = []
+
+        for owner in self.__team_owners:
+            unreconciled = [x for x in self.__unreconciled_players if x.owner.owner_id == owner.owner_id]
+            unreconciled.sort(key=lambda x: x.player)
+            owners.append(dict(owner=owner, unreconciled_players=unreconciled))
+
+        return owners
+
     @classmethod
     def from_draft_file(cls, draft_file):
         draft_data = Draft().from_json_file(draft_file)
@@ -117,107 +127,6 @@ class Season:
                    rosters=[SeasonRosterPlayer(TeamOwner(**x['owner']), Player(x['player'])) for x in season_data['team_rosters']],
                    unreconciled_players=[SeasonRosterPlayer(TeamOwner(**x['owner']), f'"{x["player"]}"') for x in season_data['unreconciled_players']],
                    **season_data['metadata'])
-
-    def calculate_and_display_owner_leaderboard(self):
-        owners = []
-        print('---------- OWNER LEADERBOARD ----------')
-
-        for owner in self.__team_owners:
-            bat_points = sum(x.player.player.points for x in self.top_x_batters if x.owner.owner_id == owner.owner_id)
-            pit_points = sum(x.player.player.points for x in self.top_x_pitchers if x.owner.owner_id == owner.owner_id)
-            tot_points = bat_points + pit_points
-            overall_points = sum(p.player.player.points for p in self.__team_rosters if p.owner.owner_id == owner.owner_id)
-
-            owners.append(dict(owner_info=owner, bat_points=bat_points, pit_points=pit_points,
-                               points=tot_points, overall_points=overall_points))
-
-        owners.sort(key=lambda x: x['points'], reverse=True)
-        print(''.join(f'"{x["owner_info"].display_name}",{x["bat_points"]},{x["pit_points"]},{x["points"]},{x["overall_points"]}\n'
-                      for x in owners).rstrip('\n'))
-        with open('/tmp/owners.csv', 'w', newline='', encoding='utf8') as f1:
-            f1.write('"Owner","Batting","Pitching","Total","Overall"\n')
-            f1.writelines([f'"{x["owner_info"].display_name}",{x["bat_points"]},{x["pit_points"]},{x["points"]},{x["overall_points"]}\n'
-                           for x in owners])
-
-    def calculate_and_display_topx_stats(self):
-        csv_output = []
-        player_word = 'PLAYER' if self.__top_player_count == 1 else 'PLAYERS'
-        print(f'---------- SCORING STATISTICS FOR TOP {self.__top_player_count} {player_word} ----------')
-
-        for owner in self.__team_owners:
-            print(f'***** {owner.display_name}')
-
-            local_batters = [x for x in self.top_x_batters if x.owner.owner_id == owner.owner_id]
-            print(''.join(f'{x.player.output_csv_format()}\n' for x in local_batters).rstrip('\n'))
-            bat_points = sum(x.player.player.points for x in local_batters)
-            csv_output.extend([f'"{owner.display_name}",{x.player.output_points_csv()}\n' for x in local_batters])
-
-            local_pitchers = [x for x in self.top_x_pitchers if x.owner.owner_id == owner.owner_id]
-            print(''.join(f'{x.player.output_csv_format()}\n' for x in local_pitchers).rstrip('\n'))
-            pit_points = sum(x.player.player.points for x in local_pitchers)
-            csv_output.extend([f'"{owner.display_name}",{x.player.output_points_csv()}\n' for x in local_pitchers])
-
-            # print(f'***** {owner.display_name}')
-            # roster = [x.player for x in self.__team_rosters if x.owner.owner_id == owner.owner_id]
-            #
-            # batters = [x for x in roster if x.player.player_type == 'B']
-            # batters.sort(key=lambda x: x.player.points, reverse=True)
-            # print(''.join(f'{x.output_csv_format()}\n' for x in batters[:player_count]).rstrip('\n'))
-            # bat_points = sum(p.player.points for p in batters[:player_count])
-            # csv_output.extend([f'"{owner.display_name}",{x.output_points_csv()}\n' for x in batters[:player_count]])
-            #
-            # pitchers = [x for x in roster if x.player.player_type == 'P']
-            # pitchers.sort(key=lambda x: x.player.points, reverse=True)
-            # print(''.join(f'{x.output_csv_format()}\n' for x in pitchers[:player_count]).rstrip('\n'))
-            # pit_points = sum(p.player.points for p in pitchers[:player_count])
-            # csv_output.extend([f'"{owner.display_name}",{x.output_points_csv()}\n' for x in pitchers[:player_count]])
-
-            tot_points = bat_points + pit_points
-            print(f'"Batter Points",{bat_points}')
-            print(f'"Pitcher Points",{pit_points}')
-            print(f'"Total Points",{tot_points}')
-
-        with open(f'/tmp/top_{self.__top_player_count}.csv', 'w', newline='', encoding='utf8') as f:
-            f.write('"Owner","Type","Player","PTS"\n')
-            f.writelines(csv_output)
-
-    def display_all_standings(self):
-        self.display_full_statistics()
-        self.calculate_and_display_topx_stats()
-        self.calculate_and_display_owner_leaderboard()
-        self.display_unreconciled_players()
-
-    def display_full_statistics(self):
-        print('---------- FULL ROSTER STATISTICS ----------')
-        print('"Type","Player","H","HR","RBI","R","SB","BB","PTS"')
-        print('"Type","Player","IP","SV","SO","W","PTS"')
-
-        for owner in self.__team_owners:
-            print(f'***** {owner.display_name}')
-            roster = [x.player for x in self.__team_rosters if x.owner.owner_id == owner.owner_id]
-            roster.sort(key=lambda x: (x.player.player_type, x.player.last_name))
-            for player in roster:
-                print(f'{player.player.output_csv_format()}')
-
-        with open('/tmp/batters.csv', 'w', newline='', encoding='utf8') as f1:
-            f1.write('"Owner","Type","Player","H","HR","RBI","R","SB","BB","PTS"\n')
-            f1.writelines([f'"{x.owner.display_name}",{x.player.output_csv_format()}\n'
-                           for x in self.__team_rosters if x.player.player.player_type == 'B'])
-
-        with open('/tmp/pitchers.csv', 'w', newline='', encoding='utf8') as f2:
-            f2.write('"Owner","Type","Player","IP","SV","SO","W","PTS"\n')
-            f2.writelines([f'"{x.owner.display_name}",{x.player.output_csv_format()}\n'
-                           for x in self.__team_rosters if x.player.player.player_type == 'P'])
-
-    def display_unreconciled_players(self):
-        print('---------- UNRECONCILED PLAYERS ----------')
-
-        for owner in self.__team_owners:
-            print(f'{owner.display_name}')
-            unreconciled = [x.player for x in self.__unreconciled_players if x.owner.owner_id == owner.owner_id]
-            unreconciled.sort()
-            for player in unreconciled:
-                print(f'   {player}')
 
     def finish_season(self):
         self.season_finished = True

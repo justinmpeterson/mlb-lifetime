@@ -9,7 +9,6 @@ ARG MSF_RESPONSE_FORMAT
 ARG MSF_SEASON
 ARG MSF_SEASON_TYPE
 ARG MSF_VERSION
-ARG SSH_PRIVATE_KEY
 
 ENV MSF_API_KEY ""
 ENV MSF_FANTASY_DRAFT_ORDER ${MSF_FANTASY_DRAFT_ORDER}
@@ -23,7 +22,6 @@ ENV MSF_SEASON ${MSF_SEASON}
 ENV MSF_SEASON_TYPE ${MSF_SEASON_TYPE}
 ENV MSF_VERSION ${MSF_VERSION}
 ENV PYTHONUNBUFFERED 1
-ENV SSH_PRIVATE_KEY ${SSH_PRIVATE_KEY}
 
 RUN apk add --update --no-cache openssh-client
 
@@ -49,8 +47,3 @@ RUN chown -R luke:jedi /usr/src/app
 USER luke
 RUN mkdir -p ~/.ssh
 RUN ssh-keyscan -H tilde.team >> ~/.ssh/known_hosts
-RUN echo -e "${SSH_PRIVATE_KEY}\n" > ~/.ssh/tilde.team
-RUN chmod 0400 ~/.ssh/tilde.team
-
-RUN python -m src.mvp --run-type=draft --season=${MSF_SEASON} --season-type=${MSF_SEASON_TYPE}
-RUN python -m src.mvp --run-type=season --season=${MSF_SEASON} --season-type=${MSF_SEASON_TYPE}

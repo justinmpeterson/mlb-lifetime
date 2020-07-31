@@ -8,8 +8,11 @@ REMOTE_SVR="justin@tilde.team"
 mkdir -p ${OUT_DIR}
 ssh -i ${ID_FILE} ${REMOTE_SVR} mkdir -p ${REMOTE_DIR}
 
+python -m src.mvp --run-type=draft
+python -m src.mvp --run-type=season
 python -m src.mvp --run-type=update
-python -m src.export_html --season=${MSF_SEASON} --season-type=${MSF_SEASON_TYPE}
+python -m src.export_html
 
 scp -i ${ID_FILE} ${OUT_DIR}/stats_all.html ${REMOTE_SVR}:${REMOTE_DIR}
 scp -i ${ID_FILE} ${OUT_DIR}/leaderboard.html ${REMOTE_SVR}:${REMOTE_DIR}
+scp -i ${ID_FILE} ${OUT_DIR}/unreconciled_players.html ${REMOTE_SVR}:${REMOTE_DIR}
