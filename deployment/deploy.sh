@@ -38,7 +38,7 @@ docker build --no-cache -f Dockerfile -t ${PROJECT_IMG_NAME}:${PROJECT_TAG} \
   --build-arg MSF_VERSION="${MSF_VERSION}" \
   .
 
-if [ UPLOAD_TO_GITHUB -eq 1 ]
+if [ ${UPLOAD_TO_GITHUB} -eq 1 ]
 then
 	echo "${GITHUB_PACKAGE_TOKEN}" | docker login ${PKG_DOMAIN} -u ${GITHUB_USERNAME} --password-stdin
 	docker tag ${PROJECT_IMG_NAME}:${PROJECT_TAG} ${PKG_URL}/${PROJECT_IMG_NAME}:${PROJECT_TAG}
