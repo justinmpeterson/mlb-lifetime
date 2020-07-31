@@ -11,7 +11,7 @@
 
 ## Periodic Stat Updates
 
-1. Run `scripts/grab_html_output.sh` in the Docker image you created in the previous section. Something like this:
+1. Run `scripts/grab_html_output.sh` in the Docker image you created in the previous section. That script will generate static HTML files using the latest data, then send them to the web server. The call will look something like this:
 
 ```shell
 $ docker run -it --rm -e MSF_API_KEY -e MSF_PASSWORD \
