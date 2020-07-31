@@ -30,13 +30,9 @@ if __name__ == '__main__':
                         default='none')
     args = parser.parse_args()
 
-    print(f'{args.season},{args.season_type}')
-
     season = int(os.getenv('MSF_SEASON')) or 1776
     season = args.season if args.season != 1776 else season
     season_type = os.getenv('MSF_SEASON_TYPE') or 'regular'
     season_type = args.season_type if args.season_type != 'none' else season_type
-
-    print(f'{season},{season_type}')
 
     main()
