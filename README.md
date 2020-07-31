@@ -23,10 +23,10 @@ $ docker run -it --rm -e MSF_API_KEY -e MSF_PASSWORD \
 
 - [ ] Refactor so it can work for other leagues and other fantasy formats
 - [x] Pass the SSH key at runtime rather than baking it into the Dockerfile
-- [ ] Create an HTML page that lists unreconciled players per owner
+- [x] Create an HTML page that lists unreconciled players per owner
 - [ ] Put a navbar at the top of each page
 - [ ] Add **Last Date Played** to the Stats page, or **On IL**, or something that makes sense
 - [ ] Add **Next Probable Start** to the Stats page
 - [ ] Enable `?person=John` in the query string so that John's players appear first
-- [ ] Update `export_html.py` to use environment variables for season and season type, like `mvp.py` does
+- [x] Update `export_html.py` to use environment variables for season and season type, like `mvp.py` does
 - [ ] Figure out players like Ohtani who could legitimately contend as both a batter and a pitcher

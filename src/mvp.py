@@ -38,11 +38,6 @@ def create_draft_file(draft_season, pick_file, draft_file, player_file):
         json.dump(json.loads(str(draft_obj)), f3)
 
 
-def display_standings(season_file):
-    season_obj = Season().from_json_file(season_file)
-    season_obj.display_all_standings()
-
-
 def start_season_from_draft_data(draft_file, season_file):
     season_obj = Season().from_draft_file(draft_file)
     season_obj.start_season()
@@ -107,8 +102,6 @@ def main():
         start_season_from_draft_data(file_names['draft_data'], file_names['season_data'])
     elif args.run_type == 'update':
         update_season_data(file_names['season_data'], file_names['cumulative_player_stats'])
-    elif args.run_type == 'standings':
-        display_standings(file_names['season_data'])
 
 
 if __name__ == '__main__':
