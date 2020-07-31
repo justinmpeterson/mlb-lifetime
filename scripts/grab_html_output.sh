@@ -8,7 +8,7 @@ REMOTE_SVR="justin@tilde.team"
 mkdir -p ${OUT_DIR}
 ssh -i ${ID_FILE} ${REMOTE_SVR} mkdir -p ${REMOTE_DIR}
 
-python -m src.mvp --run-type=all
+python -m src.the_app --run-type=all
 python -m src.export_html
 
 scp -i ${ID_FILE} ${OUT_DIR}/stats_all.html ${REMOTE_SVR}:${REMOTE_DIR}

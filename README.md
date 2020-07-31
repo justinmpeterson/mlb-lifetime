@@ -28,5 +28,5 @@ $ docker run -it --rm -e MSF_API_KEY -e MSF_PASSWORD \
 - [ ] Add **Last Date Played** to the Stats page, or **On IL**, or something that makes sense
 - [ ] Add **Next Probable Start** to the Stats page
 - [ ] Enable `?person=John` in the query string so that John's players appear first
-- [x] Update `export_html.py` to use environment variables for season and season type, like `mvp.py` does
+- [x] Update `export_html.py` to use environment variables for season and season type, like `the_app.py` does
 - [ ] Figure out players like Ohtani who could legitimately contend as both a batter and a pitcher
