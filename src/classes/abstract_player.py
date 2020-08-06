@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from math import trunc
 
 
+# TODO Update this to use flattened data instead. We will never invoke this class using MSF-formatted data.
+
+
 class AbstractPlayer(ABC):
     def __init__(self, player_data=None):
         self.player_type = 'R'

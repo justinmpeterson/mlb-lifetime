@@ -2,6 +2,9 @@ from .abstract_player import Batter, Pitcher
 from .player_types import PlayerTypes
 
 
+# TODO Update this to use flattened data instead. We will never invoke this class using MSF-formatted data.
+
+
 class Player:
     def __init__(self, player_data):
         # print(f'--- {player_data}')

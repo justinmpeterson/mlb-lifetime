@@ -35,19 +35,6 @@ class Draft:
 
     @classmethod
     def from_json_file(cls, draft_file):
-        def mock_msf_format(player_data):
-            return ('{"player": {' +
-                    '"ID": "' + str(player_data['player_id']) + '", ' +
-                    '"LastName": "' + player_data['last_name'] + '", ' +
-                    '"FirstName": "' + player_data['first_name'] + '", ' +
-                    '"Position": "' + player_data['player_type'] + '"' +
-                    '}, "team": {' +
-                    '"ID": "' + str(player_data['team_id']) + '", ' +
-                    '"City": "' + player_data['team_city'] + '", ' +
-                    '"Name": "' + player_data['team_name'] + '"}' +
-                    '}'
-                    )
-
         local_draft_picks = []
 
         with open(draft_file, 'r') as f:
@@ -108,6 +95,7 @@ class Draft:
                                                 pick_owner.owner_info, False, pick))
             overall_pick_number += 1
 
+    # TODO Update this to use flattened data instead
     def reconcile_players_with_data_provider(self, provider_players):
         for pick in self.__draft_picks:
             pick_parts = pick.player_txt.split(',')

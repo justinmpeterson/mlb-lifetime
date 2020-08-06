@@ -29,7 +29,7 @@ class MSFConnector:
             season = season_details['slug'].split('-')
             season[0] = int(season[0])
         except Exception as e:
-            season = [1800, 'pre']
+            season = [1776, 'pre']
 
         return season
 

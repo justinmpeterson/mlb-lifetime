@@ -4,6 +4,7 @@ from .classes.msf_connector import MSFConnector
 from .classes.season import Season
 from .classes.team_owner import TeamOwner
 import argparse
+from datetime import date
 from dotenv import load_dotenv
 import json
 import os
@@ -56,11 +57,58 @@ def update_season_data(season_file, stat_file_name):
 
 
 def update_provider_data():
+    def flatten_provider_data():
+        players = []
+
+        with open(file_names['msf_season'], 'r') as f:
+            curr_seas = json.load(f)
+        with open(file_names['msf_stats'], 'r') as f:
+            curr_stats = json.load(f)
+
+        eligible_stats = curr_seas['currentseason']['season'][0]['supportedPlayerStats']
+
+        for player in curr_stats['cumulativeplayerstats']['playerstatsentry']:
+            this_player = {}
+            this_player['player_id'] = player["player"]["ID"]
+            this_player['first_name'] = player["player"]["FirstName"]
+            this_player['last_name'] = player["player"]["LastName"]
+            this_player['player_position'] = player["player"]["Position"]
+            this_player['player_type'] = 'P' if player['player']['Position'] == 'P' else 'B'
+
+            try:
+                this_player['team_id'] = player['team']['ID']
+                this_player['team_city'] = player['team']['City']
+                this_player['team_name'] = player['team']['Name']
+            except Exception as e:
+                this_player['team_id'] = 0
+                this_player['team_city'] = ''
+                this_player['team_name'] = ''
+
+            for stat in eligible_stats['playerStat']:
+                stat_name = (stat['name'].replace('(', '')
+                             .replace(')', '')
+                             .replace('-', '')
+                             .replace(' ', '_').lower())
+
+                player_stat = next((x for x in player['stats'].values() if x['@category'] == stat['category'] and
+                                    x['@abbreviation'] == stat['abbreviation']), None)
+                if player_stat is not None:
+                    this_player[stat_name] = player_stat["#text"]
+                else:
+                    this_player[stat_name] = 0
+
+            players.append(this_player)
+
+        with open(file_names['flat_stats'], 'w') as f:
+            json.dump(players, f)
+
     call_file = 'data/potential_api_calls.json'
     data_source = DataSources.API
     league = os.getenv('MSF_FANTASY_LEAGUE')
     file_names = {}
     msf = MSFConnector(os.getenv('MSF_VERSION'), os.getenv('MSF_API_KEY'), os.getenv('MSF_PASSWORD'), call_file)
+
+    current_msf_season = msf.get_current_season(league, os.getenv('MSF_RESPONSE_FORMAT'))
 
     local_season = int(os.getenv('MSF_SEASON')) or 1776
     local_season = args.season if args.season != 1776 else local_season
@@ -68,16 +116,18 @@ def update_provider_data():
     local_season_type = args.season_type if args.season_type != 'none' else local_season_type
 
     if local_season == 1776:
-        current_season = msf.get_current_season(league, os.getenv('MSF_RESPONSE_FORMAT'))
-        season = current_season[0]
-        season_type = current_season[1]
+        season = current_msf_season[0]
+        season_type = current_msf_season[1]
     else:
         season = local_season
         season_type = local_season_type
 
+    file_names['msf_season'] = f'results/current_season-{league}--{date.today().strftime("%Y%m%d")}.json'
+    file_names['msf_stats'] = f'results/cumulative_player_stats-{league}-{season}-{season_type}.json'
     file_names['pick_data'] = f'data/drafts/{season}-{season_type}-picks.txt'
     file_names['draft_data'] = f'data/drafts/{season}-{season_type}.json'
     file_names['season_data'] = f'data/seasons/{season}-{season_type}.json'
+    file_names['flat_stats'] = f'data/stats/{season}-{season_type}.json'
 
     endpoint = 'active_players'
     msf.set_call_signature(league, season_type, endpoint, season)
@@ -88,6 +138,8 @@ def update_provider_data():
     msf.set_call_signature(league, season_type, endpoint, season)
     msf.make_api_call(data_source)
     file_names[endpoint] = msf.file_name
+
+    flatten_provider_data()
 
     return season, file_names
 
