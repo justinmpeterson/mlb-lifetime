@@ -142,9 +142,12 @@ class Season:
     def start_season(self):
         self.season_started = True
 
-    def update_player_stats(self, provider_data):
+    def update_player_stats(self, stat_file_name):
+        with open(stat_file_name, 'r') as f:
+            all_stats = json.load(f)
+
         for player in [x.player for x in self.__team_rosters]:
-            player_stats = next((x for x in provider_data if x['player']['ID'] == player.player.player_id),
+            player_stats = next((x for x in all_stats if x['player_id'] == player.player.player_id),
                                 None)
             if player_stats is not None:
                 player.player.update_stats(player_stats)

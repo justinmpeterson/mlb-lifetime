@@ -27,12 +27,12 @@ def create_draft_file(draft_season, pick_file, draft_file, player_file):
         ordered_owners.append([x for x in all_owners if x.owner_id == int(pick_owner)][0])
 
     with open(player_file, 'r') as f2:
-        active_players = json.load(f2)['activeplayers']['playerentry']
+        active_players = json.load(f2)
 
     draft_obj = Draft(draft_season, owner_count, round_count, snake_style_draft)
     draft_obj.set_owners(ordered_owners)
     draft_obj.load_picks_from_file(pick_file)
-    draft_obj.reconcile_players_with_data_provider(active_players)
+    draft_obj.reconcile_players_with_data_provider(player_file)
     draft_obj.finalize_draft()
 
     with open(draft_file, 'w') as f3:
@@ -48,26 +48,35 @@ def start_season_from_draft_data(draft_file, season_file):
 def update_season_data(season_file, stat_file_name):
     season_obj = Season().from_json_file(season_file)
 
-    with open(stat_file_name, 'r') as f:
-        all_stats = json.load(f)['cumulativeplayerstats']['playerstatsentry']
-
-    season_obj.update_player_stats(all_stats)
+    season_obj.update_player_stats(stat_file_name)
 
     season_obj.save_data(season_file)
 
 
 def update_provider_data():
-    def flatten_provider_data():
+    def flatten_provider_data(data_type):
         players = []
+        data_level_one = ''
+        data_level_two = ''
+
+        in_file = f'msf_{data_type}'
+        out_file = f'flat_{data_type}'
+
+        if data_type == 'players':
+            data_level_one = 'activeplayers'
+            data_level_two = 'playerentry'
+        elif data_type == 'stats':
+            data_level_one = 'cumulativeplayerstats'
+            data_level_two = 'playerstatsentry'
 
         with open(file_names['msf_season'], 'r') as f:
             curr_seas = json.load(f)
-        with open(file_names['msf_stats'], 'r') as f:
+        with open(file_names[in_file], 'r') as f:
             curr_stats = json.load(f)
 
         eligible_stats = curr_seas['currentseason']['season'][0]['supportedPlayerStats']
 
-        for player in curr_stats['cumulativeplayerstats']['playerstatsentry']:
+        for player in curr_stats[data_level_one][data_level_two]:
             this_player = {}
             this_player['player_id'] = player["player"]["ID"]
             this_player['first_name'] = player["player"]["FirstName"]
@@ -84,22 +93,27 @@ def update_provider_data():
                 this_player['team_city'] = ''
                 this_player['team_name'] = ''
 
-            for stat in eligible_stats['playerStat']:
-                stat_name = (stat['name'].replace('(', '')
-                             .replace(')', '')
-                             .replace('-', '')
-                             .replace(' ', '_').lower())
+            if data_type == 'stats':
+                for stat in eligible_stats['playerStat']:
+                    if stat['name'] == 'Strikeouts':
+                        stat_name = f'{stat["category"].lower()}_strikeouts'
+                    else:
+                        stat_name = (stat['name'].replace('(', '')
+                                     .replace(')', '')
+                                     .replace('-', '')
+                                     .replace(' ', '_').lower())
 
-                player_stat = next((x for x in player['stats'].values() if x['@category'] == stat['category'] and
-                                    x['@abbreviation'] == stat['abbreviation']), None)
-                if player_stat is not None:
-                    this_player[stat_name] = player_stat["#text"]
-                else:
-                    this_player[stat_name] = 0
+                    player_stat = next((x for x in player['stats'].values() if '@category' in x and
+                                        x['@category'] == stat['category'] and
+                                        x['@abbreviation'] == stat['abbreviation']), None)
+                    if player_stat is not None:
+                        this_player[stat_name] = player_stat["#text"]
+                    else:
+                        this_player[stat_name] = 0
 
             players.append(this_player)
 
-        with open(file_names['flat_stats'], 'w') as f:
+        with open(file_names[out_file], 'w') as f:
             json.dump(players, f)
 
     call_file = 'data/potential_api_calls.json'
@@ -122,11 +136,13 @@ def update_provider_data():
         season = local_season
         season_type = local_season_type
 
+    file_names['msf_players'] = f'results/active_players-{league}-{season}-{season_type}.json'
     file_names['msf_season'] = f'results/current_season-{league}--{date.today().strftime("%Y%m%d")}.json'
     file_names['msf_stats'] = f'results/cumulative_player_stats-{league}-{season}-{season_type}.json'
     file_names['pick_data'] = f'data/drafts/{season}-{season_type}-picks.txt'
     file_names['draft_data'] = f'data/drafts/{season}-{season_type}.json'
     file_names['season_data'] = f'data/seasons/{season}-{season_type}.json'
+    file_names['flat_players'] = f'data/players/{season}-{season_type}.json'
     file_names['flat_stats'] = f'data/stats/{season}-{season_type}.json'
 
     endpoint = 'active_players'
@@ -139,7 +155,8 @@ def update_provider_data():
     msf.make_api_call(data_source)
     file_names[endpoint] = msf.file_name
 
-    flatten_provider_data()
+    flatten_provider_data('players')
+    flatten_provider_data('stats')
 
     return season, file_names
 
@@ -149,16 +166,16 @@ def main():
 
     if args.run_type == 'draft':
         create_draft_file(current_season, file_names['pick_data'], file_names['draft_data'],
-                          file_names['active_players'])
+                          file_names['flat_players'])
     elif args.run_type == 'season':
         start_season_from_draft_data(file_names['draft_data'], file_names['season_data'])
     elif args.run_type == 'update':
-        update_season_data(file_names['season_data'], file_names['cumulative_player_stats'])
+        update_season_data(file_names['season_data'], file_names['flat_stats'])
     elif args.run_type == 'all':
         create_draft_file(current_season, file_names['pick_data'], file_names['draft_data'],
                           file_names['active_players'])
         start_season_from_draft_data(file_names['draft_data'], file_names['season_data'])
-        update_season_data(file_names['season_data'], file_names['cumulative_player_stats'])
+        update_season_data(file_names['season_data'], file_names['flat_stats'])
 
 
 if __name__ == '__main__':

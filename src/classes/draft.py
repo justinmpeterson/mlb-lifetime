@@ -30,10 +30,6 @@ class Draft:
         self.__team_owners = [] if team_owners is None else team_owners
 
     @classmethod
-    def from_raw_data(cls, season, number_of_owners, number_of_rounds, is_snake_style, draft_order, pick_file):
-        pass
-
-    @classmethod
     def from_json_file(cls, draft_file):
         local_draft_picks = []
 
@@ -95,13 +91,15 @@ class Draft:
                                                 pick_owner.owner_info, False, pick))
             overall_pick_number += 1
 
-    # TODO Update this to use flattened data instead
-    def reconcile_players_with_data_provider(self, provider_players):
+    def reconcile_players_with_data_provider(self, player_file):
+        with open(player_file, 'r') as f2:
+            active_players = json.load(f2)
+
         for pick in self.__draft_picks:
             pick_parts = pick.player_txt.split(',')
             name = pick_parts[0].strip('"')
-            found_players = [x for x in provider_players if
-                             f'{x["player"]["FirstName"]} {x["player"]["LastName"]}' == name]
+            found_players = [x for x in active_players if
+                             f'{x["first_name"]} {x["last_name"]}' == name]
             if len(found_players) == 0:
                 pass
             elif len(found_players) == 1:
