@@ -2,7 +2,9 @@
 __pycache__/
 data/*.*
 data/drafts/*.*
+data/players/*.*
 data/seasons/*.*
+data/stats/*.*
 output/
 results/
 src/**/__pycache__/
