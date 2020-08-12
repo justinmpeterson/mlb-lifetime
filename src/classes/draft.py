@@ -98,8 +98,7 @@ class Draft:
         for pick in self.__draft_picks:
             pick_parts = pick.player_txt.split(',')
             name = pick_parts[0].strip('"')
-            found_players = [x for x in active_players if
-                             f'{x["first_name"]} {x["last_name"]}' == name]
+            found_players = [x for x in active_players if f'{x["first_name"]} {x["last_name"]}' == name]
             if len(found_players) == 0:
                 pass
             elif len(found_players) == 1:

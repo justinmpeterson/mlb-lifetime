@@ -147,7 +147,7 @@ class Season:
             all_stats = json.load(f)
 
         for player in [x.player for x in self.__team_rosters]:
-            player_stats = next((x for x in all_stats if x['player_id'] == player.player.player_id),
+            player_stats = next((x for x in all_stats if int(x['player_id']) == player.player.player_id),
                                 None)
             if player_stats is not None:
                 player.player.update_stats(player_stats)

@@ -26,9 +26,6 @@ def create_draft_file(draft_season, pick_file, draft_file, player_file):
     for pick_owner in draft_order_owner_ids:
         ordered_owners.append([x for x in all_owners if x.owner_id == int(pick_owner)][0])
 
-    with open(player_file, 'r') as f2:
-        active_players = json.load(f2)
-
     draft_obj = Draft(draft_season, owner_count, round_count, snake_style_draft)
     draft_obj.set_owners(ordered_owners)
     draft_obj.load_picks_from_file(pick_file)
@@ -173,7 +170,7 @@ def main():
         update_season_data(file_names['season_data'], file_names['flat_stats'])
     elif args.run_type == 'all':
         create_draft_file(current_season, file_names['pick_data'], file_names['draft_data'],
-                          file_names['active_players'])
+                          file_names['flat_players'])
         start_season_from_draft_data(file_names['draft_data'], file_names['season_data'])
         update_season_data(file_names['season_data'], file_names['flat_stats'])
 

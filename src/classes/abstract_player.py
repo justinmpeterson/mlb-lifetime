@@ -9,7 +9,15 @@ class AbstractPlayer(ABC):
         self.first_name = player_data['first_name']
         self.last_name = player_data['last_name']
         self.display_name = f'{self.first_name} {self.last_name}'
-        self.position = player_data['player_position']
+
+        self.player_position = player_data['player_position']
+
+        # try:
+        #     self.position = player_data['player_position']
+        # except KeyError as ke:
+        #     self.position = 'B'
+        #     print(f'!!! {player_data}')
+
         try:
             self.team_id = player_data['team_id']
             self.team_city = player_data['team_city']
@@ -68,7 +76,8 @@ class Batter(AbstractPlayer):
     def __repr__(self):
         return ('{' +
                 '"player_type": "' + self.player_type + '", ' +
-                '"player_id": ' + self.player_id + ', ' +
+                '"player_position": "' + self.player_position + '", ' +
+                '"player_id": ' + str(self.player_id) + ', ' +
                 '"first_name": "' + self.first_name + '", ' +
                 '"last_name": "' + self.last_name + '", ' +
                 '"team_id": ' + str(self.team_id) + ', ' +
@@ -112,7 +121,8 @@ class Pitcher(AbstractPlayer):
     def __repr__(self):
         return ('{' +
                 '"player_type": "' + self.player_type + '", ' +
-                '"player_id": ' + self.player_id + ', ' +
+                '"player_position": "' + self.player_position + '", ' +
+                '"player_id": ' + str(self.player_id) + ', ' +
                 '"first_name": "' + self.first_name + '", ' +
                 '"last_name": "' + self.last_name + '", ' +
                 '"team_id": ' + str(self.team_id) + ', ' +
