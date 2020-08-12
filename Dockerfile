@@ -28,7 +28,7 @@ RUN apk add --update --no-cache openssh-client
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 RUN mkdir data output results scripts src
-RUN mkdir data/drafts data/seasons
+RUN mkdir data/drafts data/players data/seasons data/stats
 RUN mkdir output/wwwhtml
 
 COPY ./data/drafts/*.txt ./data/drafts/
