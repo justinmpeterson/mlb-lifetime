@@ -1,5 +1,6 @@
 from .website import app
 import argparse
+from dotenv import load_dotenv
 import os
 
 
@@ -24,6 +25,8 @@ def main():
 
 
 if __name__ == '__main__':
+    load_dotenv()
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--season', '-s', type=int, default=1776, help='MLB season as 4-digit year')
     parser.add_argument('--season-type', '-t', help='MLB season type', choices=['pre', 'regular', 'post'],

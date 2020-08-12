@@ -36,6 +36,10 @@ def stats(player_type):
     elif player_type == 'pitchers':
         return render_template('not_implemented.html')
     elif player_type == 'all':
+        # for o in season_obj.rosters_by_owner:
+        #     print(o['owner'])
+        #     for b in o['batters']:
+        #         print(f'{b.player.player.player_id},{b.player.player.last_name},{b.player.player.hits}')
         return render_template('stats_all.html', owners=season_obj.rosters_by_owner)
 
 

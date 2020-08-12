@@ -12,12 +12,6 @@ class AbstractPlayer(ABC):
 
         self.player_position = player_data['player_position']
 
-        # try:
-        #     self.position = player_data['player_position']
-        # except KeyError as ke:
-        #     self.position = 'B'
-        #     print(f'!!! {player_data}')
-
         try:
             self.team_id = player_data['team_id']
             self.team_city = player_data['team_city']
@@ -48,29 +42,29 @@ class Batter(AbstractPlayer):
             super().__init__(batter_data)
             try:
                 self.hits = int(batter_data['hits'])
-                self.home_runs = int(batter_data['homeruns'])
+                self.home_runs = int(batter_data['home_runs'])
                 self.runs = int(batter_data['runs'])
-                self.rbi = int(batter_data['runs_batted_in'])
-                self.walks = int(batter_data['walks'])
+                self.rbi = int(batter_data['rbi'])
+                self.batting_walks = int(batter_data['batting_walks'])
                 self.stolen_bases = int(batter_data['stolen_bases'])
             except KeyError as ke:
                 self.hits = 0
                 self.home_runs = 0
                 self.runs = 0
                 self.rbi = 0
-                self.walks = 0
+                self.batting_walks = 0
                 self.stolen_bases = 0
 
     @property
     def points(self):
-        return self.hits + self.home_runs + self.runs + self.rbi + self.walks + self.stolen_bases
+        return self.hits + self.home_runs + self.runs + self.rbi + self.batting_walks + self.stolen_bases
 
     def update_stats(self, data):
         self.hits = int(data['hits'])
-        self.home_runs = int(data['homeruns'])
+        self.home_runs = int(data['home_runs'])
         self.runs = int(data['runs'])
-        self.rbi = int(data['runs_batted_in'])
-        self.walks = int(data['walks'])
+        self.rbi = int(data['rbi'])
+        self.batting_walks = int(data['batting_walks'])
         self.stolen_bases = int(data['stolen_bases'])
 
     def __repr__(self):
@@ -88,7 +82,7 @@ class Batter(AbstractPlayer):
                 '"rbi": ' + str(self.rbi) + ', ' +
                 '"runs": ' + str(self.runs) + ', ' +
                 '"stolen_bases": ' + str(self.stolen_bases) + ', ' +
-                '"walks": ' + str(self.walks) + ', ' +
+                '"batting_walks": ' + str(self.batting_walks) + ', ' +
                 '"points": ' + str(self.points) +
                 '}')
 
@@ -100,22 +94,22 @@ class Pitcher(AbstractPlayer):
             try:
                 self.wins = int(pitcher_data['wins'])
                 self.saves = int(pitcher_data['saves'])
-                self.strikeouts = int(pitcher_data['pitching_strikeouts'])
+                self.pitching_strikeouts = int(pitcher_data['pitching_strikeouts'])
                 self.innings_pitched = trunc(float(pitcher_data['innings_pitched']))
             except KeyError as ke:
                 self.wins = 0
                 self.saves = 0
-                self.strikeouts = 0
+                self.pitching_strikeouts = 0
                 self.innings_pitched = 0
 
     @property
     def points(self):
-        return self.strikeouts + self.innings_pitched + (4 * self.wins) + (5 * self.saves)
+        return self.pitching_strikeouts + self.innings_pitched + (4 * self.wins) + (5 * self.saves)
 
     def update_stats(self, data):
         self.wins = int(data['wins'])
         self.saves = int(data['saves'])
-        self.strikeouts = int(data['pitching_strikeouts'])
+        self.pitching_strikeouts = int(data['pitching_strikeouts'])
         self.innings_pitched = trunc(float(data['innings_pitched']))
 
     def __repr__(self):
@@ -130,7 +124,7 @@ class Pitcher(AbstractPlayer):
                 '"team_name": "' + self.team_name + '", ' +
                 '"innings_pitched": ' + str(self.innings_pitched) + ', ' +
                 '"saves": ' + str(self.saves) + ', ' +
-                '"strikeouts": ' + str(self.strikeouts) + ', ' +
+                '"pitching_strikeouts": ' + str(self.pitching_strikeouts) + ', ' +
                 '"wins": ' + str(self.wins) + ', ' +
                 '"points": ' + str(self.points) +
                 '}')

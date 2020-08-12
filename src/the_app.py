@@ -92,8 +92,14 @@ def update_provider_data():
 
             if data_type == 'stats':
                 for stat in eligible_stats['playerStat']:
-                    if stat['name'] == 'Strikeouts':
+                    if stat['name'] == 'Homeruns':
+                        stat_name = 'home_runs'
+                    elif stat['name'] == 'Runs Batted In':
+                        stat_name = 'rbi'
+                    elif stat['name'] == 'Strikeouts':
                         stat_name = f'{stat["category"].lower()}_strikeouts'
+                    elif stat['name'] == 'Walks':
+                        stat_name = f'{stat["category"].lower()}_walks'
                     else:
                         stat_name = (stat['name'].replace('(', '')
                                      .replace(')', '')
