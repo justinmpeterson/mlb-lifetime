@@ -24,7 +24,7 @@ $ docker run -it --rm -e MSF_API_KEY -e MSF_PASSWORD \
 - [ ] Refactor so it can work for other leagues and other fantasy formats
 - [x] Pass the SSH key at runtime rather than baking it into the Dockerfile
 - [x] Create an HTML page that lists unreconciled players per owner
-- [ ] Put a navbar at the top of each page
+- [x] Put a navbar at the top of each page
 - [ ] Add **Last Date Played** to the Stats page, or **On IL**, or something that makes sense
 - [ ] Add **Next Probable Start** to the Stats page
 - [ ] Enable `?person=John` in the query string so that John's players appear first
