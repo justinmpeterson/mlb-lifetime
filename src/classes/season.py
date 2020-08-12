@@ -112,9 +112,9 @@ class Season:
     @classmethod
     def from_draft_file(cls, draft_file):
         draft_data = Draft().from_json_file(draft_file)
-        local_rosters = [SeasonRosterPlayer(x.owner, x.player) for x in draft_data.get_all_reconciled_players()]
-        local_unreconciled = [SeasonRosterPlayer(x.owner, f'"{x.player_txt}"') for x in draft_data.get_all_unreconciled_players()]
-        return cls(draft_data.season, False, False, draft_data.get_owners(), local_rosters, local_unreconciled)
+        local_rosters = [SeasonRosterPlayer(x.owner, x.player) for x in draft_data.reconciled_players]
+        local_unreconciled = [SeasonRosterPlayer(x.owner, f'"{x.player_txt}"') for x in draft_data.unreconciled_players]
+        return cls(draft_data.season, False, False, draft_data.team_owners, local_rosters, local_unreconciled)
 
     @classmethod
     def from_json_file(cls, season_file):
@@ -142,9 +142,12 @@ class Season:
     def start_season(self):
         self.season_started = True
 
-    def update_player_stats(self, provider_data):
+    def update_player_stats(self, stat_file_name):
+        with open(stat_file_name, 'r') as f:
+            all_stats = json.load(f)
+
         for player in [x.player for x in self.__team_rosters]:
-            player_stats = next((x for x in provider_data if x['player']['ID'] == player.player.player_id),
+            player_stats = next((x for x in all_stats if int(x['player_id']) == player.player.player_id),
                                 None)
             if player_stats is not None:
                 player.player.update_stats(player_stats)

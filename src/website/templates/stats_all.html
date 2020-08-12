@@ -37,7 +37,7 @@
                                 <td>{{ batter.player.player.runs }}</td>
                                 <td>{{ batter.player.player.rbi }}</td>
                                 <td>{{ batter.player.player.stolen_bases }}</td>
-                                <td>{{ batter.player.player.walks }}</td>
+                                <td>{{ batter.player.player.batting_walks }}</td>
                                 <td>{{ batter.player.player.points }}</td>
                             </tr>
                             {% set row_count.value = row_count.value + 1 %}
@@ -73,7 +73,7 @@
                                 <td>{{ pitcher.player.player.last_name }}, {{ pitcher.player.player.first_name }}</td>
                                 <td>{{ pitcher.player.player.innings_pitched }}</td>
                                 <td>{{ pitcher.player.player.saves }}</td>
-                                <td>{{ pitcher.player.player.strikeouts }}</td>
+                                <td>{{ pitcher.player.player.pitching_strikeouts }}</td>
                                 <td>{{ pitcher.player.player.wins }}</td>
                                 <td>{{ pitcher.player.player.points }}</td>
                             </tr>
