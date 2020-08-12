@@ -29,6 +29,18 @@ class Draft:
         self.__draft_picks = [] if draft_picks is None else draft_picks
         self.__team_owners = [] if team_owners is None else team_owners
 
+    @property
+    def reconciled_players(self):
+        return [x for x in self.__draft_picks if x.player_is_reconciled]
+
+    @property
+    def team_owners(self):
+        return [x.owner_info for x in self.__team_owners]
+
+    @property
+    def unreconciled_players(self):
+        return [x for x in self.__draft_picks if not x.player_is_reconciled]
+
     @classmethod
     def from_json_file(cls, draft_file):
         local_draft_picks = []
@@ -48,30 +60,8 @@ class Draft:
                    draft_picks=local_draft_picks,
                    **draft_data['metadata'])
 
-    def display_draft_order(self):
-        print(''.join(f'{x.pick_number}. {x.owner_info.display_name}\n' for x in self.__team_owners))
-
-    def display_draft_picks(self, pick_slot=None):
-        for o in [x for x in self.__team_owners if (pick_slot is None or
-                                                    (pick_slot is not None and x.pick_number == pick_slot))]:
-            print(f'{o.owner_info.display_name}')
-            for pick in [x for x in self.__draft_picks if x.owner.owner_id == o.owner_info.owner_id]:
-                print(f'  {pick.round_number}.{pick.pick_number} | {pick.overall_pick_number} | {pick.player_txt}')
-
     def finalize_draft(self):
         self.finished = True
-
-    def get_all_reconciled_players(self):
-        return [x for x in self.__draft_picks if x.player_is_reconciled]
-
-    def get_all_unreconciled_players(self):
-        return [x for x in self.__draft_picks if not x.player_is_reconciled]
-
-    def get_owners(self):
-        return [x.owner_info for x in self.__team_owners]
-
-    def get_players_by_owner(self, owner_id):
-        return [x.player for x in self.__draft_picks if x.player is not None and x.owner.owner_id == owner_id]
 
     def load_picks_from_file(self, pick_file):
         with open(pick_file, 'r') as dfile:

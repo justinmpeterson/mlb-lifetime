@@ -26,32 +26,14 @@ def owner_leaderboard():
 def stats(player_type):
     season_obj = get_season_object(request)
 
-    b = season_obj.batters
-    b.sort(key=lambda x: (x.owner.display_name, -x.player.player.points))
-    p = season_obj.pitchers
-    p.sort(key=lambda x: (x.owner.display_name, -x.player.player.points))
-
-    if player_type == 'batters':
-        return render_template('not_implemented.html')
-    elif player_type == 'pitchers':
-        return render_template('not_implemented.html')
-    elif player_type == 'all':
-        # for o in season_obj.rosters_by_owner:
-        #     print(o['owner'])
-        #     for b in o['batters']:
-        #         print(f'{b.player.player.player_id},{b.player.player.last_name},{b.player.player.hits}')
+    if player_type == 'all':
         return render_template('stats_all.html', owners=season_obj.rosters_by_owner)
+    else:
+        return render_template('not_implemented.html')
 
 
 @app.route('/top10')
 def top_10():
-    season_obj = get_season_object(request)
-
-    b = season_obj.top_x_batters
-    b.sort(key=lambda x: (x.owner.display_name, -x.player.player.points))
-    p = season_obj.top_x_pitchers
-    p.sort(key=lambda x: (x.owner.display_name, -x.player.player.points))
-
     return render_template('not_implemented.html')
 
 

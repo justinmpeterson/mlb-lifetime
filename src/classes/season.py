@@ -112,9 +112,9 @@ class Season:
     @classmethod
     def from_draft_file(cls, draft_file):
         draft_data = Draft().from_json_file(draft_file)
-        local_rosters = [SeasonRosterPlayer(x.owner, x.player) for x in draft_data.get_all_reconciled_players()]
-        local_unreconciled = [SeasonRosterPlayer(x.owner, f'"{x.player_txt}"') for x in draft_data.get_all_unreconciled_players()]
-        return cls(draft_data.season, False, False, draft_data.get_owners(), local_rosters, local_unreconciled)
+        local_rosters = [SeasonRosterPlayer(x.owner, x.player) for x in draft_data.reconciled_players]
+        local_unreconciled = [SeasonRosterPlayer(x.owner, f'"{x.player_txt}"') for x in draft_data.unreconciled_players]
+        return cls(draft_data.season, False, False, draft_data.team_owners, local_rosters, local_unreconciled)
 
     @classmethod
     def from_json_file(cls, season_file):

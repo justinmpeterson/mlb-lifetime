@@ -44,9 +44,7 @@ def start_season_from_draft_data(draft_file, season_file):
 
 def update_season_data(season_file, stat_file_name):
     season_obj = Season().from_json_file(season_file)
-
     season_obj.update_player_stats(stat_file_name)
-
     season_obj.save_data(season_file)
 
 

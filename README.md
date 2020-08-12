@@ -30,3 +30,4 @@ $ docker run -it --rm -e MSF_API_KEY -e MSF_PASSWORD \
 - [ ] Enable `?person=John` in the query string so that John's players appear first
 - [x] Update `export_html.py` to use environment variables for season and season type, like `the_app.py` does
 - [ ] Figure out players like Ohtani who could legitimately contend as both a batter and a pitcher
+- [ ] Refactor the `load_picks_from_file()` method in `src/classes/draft.py` to handle non-snake-style or other draft formats, as needed 
