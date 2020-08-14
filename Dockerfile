@@ -21,9 +21,11 @@ ENV MSF_RESPONSE_FORMAT ${MSF_RESPONSE_FORMAT}
 ENV MSF_SEASON ${MSF_SEASON}
 ENV MSF_SEASON_TYPE ${MSF_SEASON_TYPE}
 ENV MSF_VERSION ${MSF_VERSION}
+ENV NEOCITIES_API_KEY ""
 ENV PYTHONUNBUFFERED 1
 
-RUN apk add --update --no-cache openssh-client
+RUN apk add --update --no-cache openssh-client ruby ruby-io-console ruby-json
+RUN gem install neocities
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
@@ -45,5 +47,5 @@ RUN addgroup --gid=2000 --system jedi
 RUN adduser --ingroup jedi --system --disabled-password --uid 2001 luke
 RUN chown -R luke:jedi /usr/src/app
 USER luke
-RUN mkdir -p ~/.ssh
-RUN ssh-keyscan -H tilde.team >> ~/.ssh/known_hosts
+
+RUN mkdir -p ~/.config/neocities
