@@ -6,7 +6,7 @@ import os
 
 def do_endpoint(endpoint, filename):
     query_string = f'season={season}&season_type={season_type}'
-    output_path = f'output/wwwhtml/{season}/{season_type}'
+    output_path = f'output/wwwhtml/lifetime/{league}/{season}/{season_type}'
 
     with app.test_client() as c:
         response = c.get(f'{endpoint}?{query_string}')
@@ -33,6 +33,7 @@ if __name__ == '__main__':
                         default='none')
     args = parser.parse_args()
 
+    league = os.getenv('MSF_FANTASY_LEAGUE') or 'abc'
     season = int(os.getenv('MSF_SEASON')) or 1776
     season = args.season if args.season != 1776 else season
     season_type = os.getenv('MSF_SEASON_TYPE') or 'regular'
