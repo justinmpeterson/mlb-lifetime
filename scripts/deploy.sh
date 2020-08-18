@@ -8,10 +8,15 @@ PROJECT_TAG="${MSF_SEASON}-${MSF_SEASON_TYPE}"
 PKG_DOMAIN="docker.pkg.github.com"
 PKG_URL="${PKG_DOMAIN}/${GITHUB_USERNAME}/${GITHUB_REPO}"
 UPLOAD_TO_GITHUB=0
+BUILD_AS_ARM=0
 
 for arg in "$@"
 do
   case $arg in
+    --arm)
+      BUILD_AS_ARM=1
+      shift
+      ;;
     --github)
       UPLOAD_TO_GITHUB=1
       shift
@@ -25,6 +30,11 @@ done
 rm -rf src/__pycache__/
 rm -rf src/classes/__pycache__/
 rm -rf src/website/__pycache__/
+
+if [ ${BUILD_AS_ARM} -eq 1 ]
+then
+	PROJECT_TAG="${PROJECT_TAG}-arm"
+fi
 
 docker build --no-cache -f Dockerfile -t ${PROJECT_IMG_NAME}:${PROJECT_TAG} \
   --build-arg MSF_FANTASY_DRAFT_ORDER="${MSF_FANTASY_DRAFT_ORDER}" \
