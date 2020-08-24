@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source .env
+BUCKET_DIR=${SEED_DATA_S3_BUCKET}/lifetime/${MSF_FANTASY_LEAGUE}/${MSF_SEASON}/${MSF_SEASON_TYPE}
 GITHUB_USERNAME=justinmpeterson
 GITHUB_REPO=mlb-lifetime
 PROJECT_IMG_NAME=fantasy-lifetime-mlb
@@ -9,6 +10,7 @@ PKG_DOMAIN="docker.pkg.github.com"
 PKG_URL="${PKG_DOMAIN}/${GITHUB_USERNAME}/${GITHUB_REPO}"
 UPLOAD_TO_GITHUB=0
 BUILD_AS_ARM=0
+SEED_FROM_S3=0
 
 for arg in "$@"
 do
@@ -19,6 +21,10 @@ do
       ;;
     --github)
       UPLOAD_TO_GITHUB=1
+      shift
+      ;;
+    --s3)
+      SEED_FROM_S3=1
       shift
       ;;
     *)
@@ -34,6 +40,12 @@ rm -rf src/website/__pycache__/
 if [ ${BUILD_AS_ARM} -eq 1 ]
 then
 	PROJECT_TAG="${PROJECT_TAG}-arm"
+fi
+
+if [ ${SEED_FROM_S3} -eq 1 ]
+then
+	aws s3 cp s3://${BUCKET_DIR}/team_owners.json data/
+	aws s3 cp s3://${BUCKET_DIR}/${MSF_SEASON}-${MSF_SEASON_TYPE}-picks.txt data/drafts/
 fi
 
 docker build --no-cache -f Dockerfile -t ${PROJECT_IMG_NAME}:${PROJECT_TAG} \
