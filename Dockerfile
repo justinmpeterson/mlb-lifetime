@@ -24,7 +24,7 @@ ENV MSF_VERSION ${MSF_VERSION}
 ENV NEOCITIES_API_KEY ""
 ENV PYTHONUNBUFFERED 1
 
-RUN apk add --update --no-cache openssh-client ruby ruby-io-console ruby-json
+RUN apk add --update --no-cache ruby ruby-io-console ruby-json
 RUN gem install neocities
 
 RUN mkdir -p /usr/src/app
