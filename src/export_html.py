@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--season', '-s', type=int, default=1776, help='MLB season as 4-digit year')
-    parser.add_argument('--season-type', '-t', help='MLB season type', choices=['pre', 'regular', 'post'],
+    parser.add_argument('--season-type', '-t', help='MLB season type', choices=['pre', 'regular', 'playoff'],
                         default='none')
     args = parser.parse_args()
 

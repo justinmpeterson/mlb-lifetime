@@ -18,15 +18,23 @@ class SeasonRosterPlayer:
 
 
 class Season:
-    def __init__(self, season=2000, season_started=False, season_finished=False, owners=None, rosters=None,
-                 unreconciled_players=None):
+    def __init__(self, season=2000, season_type='regular', season_started=False, season_finished=False, owners=None,
+                 rosters=None, unreconciled_players=None):
         self.__top_player_count = 10
         self.season = season
+        self.season_type = season_type
         self.season_started = season_started
         self.season_finished = season_finished
         self.__team_owners = [] if owners is None else owners
         self.__team_rosters = [] if rosters is None else rosters
         self.__unreconciled_players = [] if unreconciled_players is None else unreconciled_players
+
+    @property
+    def top_player_count(self):
+        if self.season_type == 'regular':
+            return 10
+        elif self.season_type == 'playoff':
+            return 5
 
     @property
     def batters(self):
@@ -39,7 +47,7 @@ class Season:
             roster = [x for x in self.__team_rosters if x.owner.owner_id == owner.owner_id]
             batters = [x for x in roster if x.player.player.player_type == 'B']
             batters.sort(key=lambda x: x.player.player.points, reverse=True)
-            top_x.extend([x for x in batters[:self.__top_player_count]])
+            top_x.extend([x for x in batters[:self.top_player_count]])
         return top_x
 
     @property
@@ -53,7 +61,7 @@ class Season:
             roster = [x for x in self.__team_rosters if x.owner.owner_id == owner.owner_id]
             pitchers = [x for x in roster if x.player.player.player_type == 'P']
             pitchers.sort(key=lambda x: x.player.player.points, reverse=True)
-            top_x.extend([x for x in pitchers[:self.__top_player_count]])
+            top_x.extend([x for x in pitchers[:self.top_player_count]])
         return top_x
 
     @property
@@ -110,11 +118,12 @@ class Season:
         return owners
 
     @classmethod
-    def from_draft_file(cls, draft_file):
+    def from_draft_file(cls, draft_file, season_type):
         draft_data = Draft().from_json_file(draft_file)
         local_rosters = [SeasonRosterPlayer(x.owner, x.player) for x in draft_data.reconciled_players]
         local_unreconciled = [SeasonRosterPlayer(x.owner, f'"{x.player_txt}"') for x in draft_data.unreconciled_players]
-        return cls(draft_data.season, False, False, draft_data.team_owners, local_rosters, local_unreconciled)
+        return cls(draft_data.season, season_type, False, False, draft_data.team_owners, local_rosters,
+                   local_unreconciled)
 
     @classmethod
     def from_json_file(cls, season_file):
@@ -159,6 +168,7 @@ class Season:
     def __repr__(self):
         return ('{"metadata": {' +
                 '"season": ' + str(self.season) + ', ' +
+                '"season_type": "' + self.season_type + '", ' +
                 '"season_started": ' + ('true' if self.season_started else 'false') + ', ' +
                 '"season_finished": ' + ('true' if self.season_finished else 'false') + '}, ' +
                 '"team_owners": [' + ''.join(f'{x}, ' for x in self.__team_owners).rstrip(', ') + '], ' +

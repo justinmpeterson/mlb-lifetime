@@ -31,6 +31,22 @@
         "feed": "active_players",
         "format": "json"
       }
+    },
+    "playoff": {
+      "cumulative_player_stats": {
+        "league": "mlb",
+        "season_year": "1800",
+        "season_type": "playoff",
+        "feed": "cumulative_player_stats",
+        "format": "json"
+      },
+      "active_players": {
+        "league": "mlb",
+        "season_year": "1800",
+        "season_type": "playoff",
+        "feed": "active_players",
+        "format": "json"
+      }
     }
   }
 }
