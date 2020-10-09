@@ -25,7 +25,7 @@
                     <tbody>
                         {% set row_count = namespace(value=1) %}
                         {% for batter in owner.batters %}
-                            {% if row_count.value <= 10 %}
+                            {% if row_count.value <= top_player_count %}
                                 {% set row_class = "table-success" %}
                             {% else %}
                                 {% set row_class = "table-info" %}
@@ -64,7 +64,7 @@
                     <tbody>
                         {% set row_count = namespace(value=1) %}
                         {% for pitcher in owner.pitchers %}
-                            {% if row_count.value <= 10 %}
+                            {% if row_count.value <= top_player_count %}
                                 {% set row_class = "table-success" %}
                             {% else %}
                                 {% set row_class = "table-info" %}

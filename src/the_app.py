@@ -10,7 +10,7 @@ import json
 import os
 
 
-def create_draft_file(draft_season, pick_file, draft_file, player_file):
+def create_draft_file(draft_season, draft_season_type, pick_file, draft_file, player_file):
     owner_count = int(os.getenv('MSF_FANTASY_OWNERS'))
     round_count = int(os.getenv('MSF_FANTASY_DRAFT_ROUNDS'))
     snake_style_draft = True if os.getenv('MSF_FANTASY_DRAFT_SNAKE') == 'true' else False
@@ -18,6 +18,11 @@ def create_draft_file(draft_season, pick_file, draft_file, player_file):
     all_owners = []
     ordered_owners = []
     draft_order_owner_ids = os.getenv('MSF_FANTASY_DRAFT_ORDER').split(',')
+
+    if draft_season_type == 'playoff' and not has_postseason_draft:
+        return
+
+    print('Creating draft file')
 
     with open(owner_file, 'r') as f1:
         owner_data = json.load(f1)
@@ -36,8 +41,8 @@ def create_draft_file(draft_season, pick_file, draft_file, player_file):
         json.dump(json.loads(str(draft_obj)), f3)
 
 
-def start_season_from_draft_data(draft_file, season_file):
-    season_obj = Season().from_draft_file(draft_file)
+def start_season_from_draft_data(draft_file, season_file, season_type):
+    season_obj = Season().from_draft_file(draft_file, season_type)
     season_obj.start_season()
     season_obj.save_data(season_file)
 
@@ -137,11 +142,21 @@ def update_provider_data():
         season = local_season
         season_type = local_season_type
 
+    season_type_for_filename = 'regular' if season_type == 'playoff' and not has_postseason_draft else season_type
+
+    # if season_type == 'playoff':
+    #     if has_postseason_draft:
+    #         season_type_for_filename = 'regular'
+    #     else:
+    #         season_type_for_filename = season_type
+    # else:
+    #     season_type_for_filename = season_type
+
     file_names['msf_players'] = f'results/active_players-{league}-{season}-{season_type}.json'
     file_names['msf_season'] = f'results/current_season-{league}--{date.today().strftime("%Y%m%d")}.json'
     file_names['msf_stats'] = f'results/cumulative_player_stats-{league}-{season}-{season_type}.json'
     file_names['pick_data'] = f'data/drafts/{season}-{season_type}-picks.txt'
-    file_names['draft_data'] = f'data/drafts/{season}-{season_type}.json'
+    file_names['draft_data'] = f'data/drafts/{season}-{season_type_for_filename}.json'
     file_names['season_data'] = f'data/seasons/{season}-{season_type}.json'
     file_names['flat_players'] = f'data/players/{season}-{season_type}.json'
     file_names['flat_stats'] = f'data/stats/{season}-{season_type}.json'
@@ -159,33 +174,35 @@ def update_provider_data():
     flatten_provider_data('players')
     flatten_provider_data('stats')
 
-    return season, file_names
+    return season, season_type, file_names
 
 
 def main():
-    current_season, file_names = update_provider_data()
+    current_season, current_season_type, file_names = update_provider_data()
 
     if args.run_type == 'draft':
-        create_draft_file(current_season, file_names['pick_data'], file_names['draft_data'],
+        create_draft_file(current_season, current_season_type, file_names['pick_data'], file_names['draft_data'],
                           file_names['flat_players'])
     elif args.run_type == 'season':
-        start_season_from_draft_data(file_names['draft_data'], file_names['season_data'])
+        start_season_from_draft_data(file_names['draft_data'], file_names['season_data'], current_season_type)
     elif args.run_type == 'update':
         update_season_data(file_names['season_data'], file_names['flat_stats'])
     elif args.run_type == 'all':
-        create_draft_file(current_season, file_names['pick_data'], file_names['draft_data'],
+        create_draft_file(current_season, current_season_type, file_names['pick_data'], file_names['draft_data'],
                           file_names['flat_players'])
-        start_season_from_draft_data(file_names['draft_data'], file_names['season_data'])
+        start_season_from_draft_data(file_names['draft_data'], file_names['season_data'], current_season_type)
         update_season_data(file_names['season_data'], file_names['flat_stats'])
 
 
 if __name__ == '__main__':
     load_dotenv()
 
+    has_postseason_draft = True if os.getenv('MSF_HAS_POSTSEASON_DRAFT') == 'true' else False
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--run-type', '-r', help='What type of run to do', choices=['all', 'draft', 'season', 'update'])
     parser.add_argument('--season', '-s', type=int, default=1776, help='MLB season as 4-digit year')
-    parser.add_argument('--season-type', '-t', help='MLB season type', choices=['pre', 'regular', 'post'],
+    parser.add_argument('--season-type', '-t', help='MLB season type', choices=['pre', 'regular', 'playoff'],
                         default='none')
     args = parser.parse_args()
 

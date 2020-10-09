@@ -27,7 +27,8 @@ def stats(player_type):
     season_obj = get_season_object(request)
 
     if player_type == 'all':
-        return render_template('stats_all.html', owners=season_obj.rosters_by_owner, active_page='stats_all')
+        return render_template('stats_all.html', owners=season_obj.rosters_by_owner, active_page='stats_all',
+                               top_player_count=season_obj.top_player_count)
     else:
         return render_template('not_implemented.html')
 
