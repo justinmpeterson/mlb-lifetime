@@ -10,6 +10,7 @@ PKG_URL="${PKG_DOMAIN}/${GITHUB_USERNAME}/${GITHUB_REPO}"
 UPLOAD_TO_GITHUB=0
 BUILD_AS_ARM=0
 SEED_FROM_S3=0
+USE_SEMVER=0
 
 for arg in "$@"
 do
@@ -26,6 +27,10 @@ do
       SEED_FROM_S3=1
       shift
       ;;
+    --use-semver)
+      USE_SEMVER=1
+      shift
+      ;;
     *)
       shift
       ;;
@@ -35,6 +40,11 @@ done
 rm -rf src/__pycache__/
 rm -rf src/classes/__pycache__/
 rm -rf src/website/__pycache__/
+
+if [ ${USE_SEMVER} -eq 1 ]
+then
+	PROJECT_TAG="${VERSION_NUMBER}"
+fi
 
 if [ ${BUILD_AS_ARM} -eq 1 ]
 then
