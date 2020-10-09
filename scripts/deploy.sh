@@ -42,10 +42,16 @@ then
 	PROJECT_TAG="${PROJECT_TAG}-arm"
 fi
 
+TEMP_SEASON_TYPE=${MSF_SEASON_TYPE}
+if [ ${MSF_SEASON_TYPE} == 'playoff' ] && [ ${MSF_HAS_POSTSEASON_DRAFT} == 'false' ]
+then
+	TEMP_SEASON_TYPE=regular
+fi
+
 if [ ${SEED_FROM_S3} -eq 1 ]
 then
 	aws s3 cp s3://${BUCKET_DIR}/team_owners.json data/
-	aws s3 cp s3://${BUCKET_DIR}/${MSF_SEASON}-${MSF_SEASON_TYPE}-picks.txt data/drafts/
+	aws s3 cp s3://${BUCKET_DIR}/${MSF_SEASON}-${TEMP_SEASON_TYPE}-picks.txt data/drafts/
 fi
 
 docker build --no-cache -f Dockerfile -t ${PROJECT_IMG_NAME}:${PROJECT_TAG} \
