@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 source .env
-BUCKET_DIR=${SEED_DATA_S3_BUCKET}/lifetime/${MSF_FANTASY_LEAGUE}/${MSF_SEASON}/${MSF_SEASON_TYPE}
 GITHUB_USERNAME=justinmpeterson
 GITHUB_REPO=mlb-lifetime
 PROJECT_IMG_NAME=fantasy-lifetime-mlb
@@ -47,6 +46,8 @@ if [ ${MSF_SEASON_TYPE} == 'playoff' ] && [ ${MSF_HAS_POSTSEASON_DRAFT} == 'fals
 then
 	TEMP_SEASON_TYPE=regular
 fi
+
+BUCKET_DIR=${SEED_DATA_S3_BUCKET}/lifetime/${MSF_FANTASY_LEAGUE}/${MSF_SEASON}/${TEMP_SEASON_TYPE}
 
 if [ ${SEED_FROM_S3} -eq 1 ]
 then
